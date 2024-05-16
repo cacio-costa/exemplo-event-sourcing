@@ -1,0 +1,36 @@
+# .NET Console Project
+
+# Ignore build output folders
+bin/
+obj/
+
+# Ignore NuGet package restore files
+packages/
+
+# Ignore Visual Studio files
+.vs/
+*.suo
+*.user
+*.sln.docstates
+
+# Ignore Resharper files
+_ReSharper*/
+
+# Ignore build and debug files
+*.pdb
+*.dll
+*.exe
+
+# Ignore project-specific files
+*.csproj.user
+*.csproj.vspscc
+
+# Ignore test results
+TestResults/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+
+# Ignore Visual Studio Code files
+.vscode/
