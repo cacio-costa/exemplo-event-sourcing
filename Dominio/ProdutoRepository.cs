@@ -6,9 +6,7 @@ namespace Dominio
 {
     public class ProdutoRepositorio
     {
-        private readonly Dictionary<Guid, Produto> produtos = [];
-
-        private readonly Dictionary<Guid, List<Evento>> EventosSalvos = [];
+        private readonly Dictionary<Guid, List<Evento<Produto>>> EventosSalvos = [];
 
 
         public List<Produto> ListaTodos()
