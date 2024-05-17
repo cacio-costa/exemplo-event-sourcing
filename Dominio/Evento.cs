@@ -2,9 +2,11 @@ using System;
 
 namespace Dominio
 {
-    public interface Evento
+    public interface Evento<T>
     {
         Guid EntidadeId { get; }
         DateTime Data  { get; }
+
+        void AplicaEm(T entidade) {}
     }
 }

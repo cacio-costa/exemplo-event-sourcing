@@ -15,7 +15,7 @@ namespace Dominio
 
         public DateTime? DataEsgotado { get; set; }
 
-        public List<Evento> Eventos { get; } = [];
+        public List<Evento<Produto>> Eventos { get; } = [];
 
         private Produto() {}
 
@@ -25,7 +25,7 @@ namespace Dominio
         }
 
         
-        public static Produto Reconstroi(List<Evento> eventos)
+        public static Produto Reconstroi(List<Evento<Produto>> eventos)
         {
             return eventos.Aggregate(new Produto(), (produto, evento) =>
             {
@@ -48,26 +48,9 @@ namespace Dominio
             this.AplicaEvento(new PrecoProdutoReajustado(this, novoPreco));
         }
 
-        public void AplicaEvento(Evento evento)
+        public void AplicaEvento(Evento<Produto> evento)
         {
-            switch (evento)
-            {
-                case ProdutoCadastrado produtoCadastrado:
-                    produtoCadastrado.Aplica(this);
-                    break;
-                case ProdutoVendido produtoVendido:
-                    produtoVendido.Aplica(this);
-                    break;
-                case PrecoProdutoReajustado precoProdutoReajustado:
-                    precoProdutoReajustado.Aplica(this);
-                    break;
-                case ProdutoEsgotado produtoEsgotado:
-                    produtoEsgotado.Aplica(this);
-                    break;
-                default:
-                    break;
-            }
-
+            evento.AplicaEm(this);
             this.Eventos.Add(evento);
         }
 
@@ -79,7 +62,7 @@ namespace Dominio
     }
 
    
-    public class ProdutoCadastrado : Evento
+    public class ProdutoCadastrado : Evento<Produto>
     {
         public Guid EntidadeId { get; }
         public DateTime Data { get; }
@@ -97,7 +80,7 @@ namespace Dominio
             this.Quantidade = quantidade;
         }
 
-        internal void Aplica(Produto produto)
+        public void AplicaEm(Produto produto)
         {
             produto.Id = this.EntidadeId;
             produto.Descricao = this.Descricao;
@@ -108,7 +91,7 @@ namespace Dominio
         }
     }
     
-    public class ProdutoVendido : Evento
+    public class ProdutoVendido : Evento<Produto>
     {
         public Guid EntidadeId { get; }
         public DateTime Data { get; set; }
@@ -123,13 +106,13 @@ namespace Dominio
             this.Preco = produto.Preco;
         }
 
-        internal void Aplica(Produto produto)
+        public void AplicaEm(Produto produto)
         {
             produto.Quantidade -= this.Quantidade;
         }
     }
 
-    public class PrecoProdutoReajustado : Evento
+    public class PrecoProdutoReajustado : Evento<Produto>
     {
         public Guid EntidadeId { get; }
         public decimal PrecoAntigo { get; }
@@ -144,13 +127,13 @@ namespace Dominio
             this.Data = DateTime.UtcNow;
         }
 
-        internal void Aplica(Produto produto)
+        public void AplicaEm(Produto produto)
         {
             produto.Preco = this.NovoPreco;
         }
     }
 
-    public class ProdutoEsgotado : Evento
+    public class ProdutoEsgotado : Evento<Produto>
     {
         public Guid EntidadeId { get; }
         public DateTime Data { get; set; }
@@ -161,7 +144,7 @@ namespace Dominio
             this.Data = DateTime.UtcNow;
         }
 
-        internal void Aplica(Produto produto)
+        public void AplicaEm(Produto produto)
         {
             produto.DataEsgotado = this.Data;
             produto.Quantidade = 0;
